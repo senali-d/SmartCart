@@ -3,8 +3,10 @@ import Head from 'next/head'
 import Card from '@/components/card'
 import Search from '@/components/search'
 import { IProduct } from '@/types/interface'
+import useLocalStorage from '@/hooks/useLocalStorage'
 
 const Products = () => {
+  const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', null)
   const [products, setProducts] = useState<IProduct[]>([])
   const [search, setSearch] = useState('')
 
@@ -27,6 +29,16 @@ const Products = () => {
     if(status === 200) {
       setProducts(res.products)
     }
+  }
+
+  const handleAddCart = (product: any) => {
+    let tempCart = []
+    if(localStoreCart !== null) {
+      tempCart = localStoreCart
+    }
+    product.quantity = 1
+    tempCart.push(product)
+    setLocalStoreCart(tempCart)
   }
 
   return (
@@ -52,6 +64,7 @@ const Products = () => {
                   rating={product.rating}
                   price={product.price}
                   id={product._id}
+                  onClick={() => handleAddCart(product)}
                 />)
             }): ''
           }

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
+import Button from './form-elements/button'
 
 interface CardProps {
   id: string
@@ -13,6 +14,7 @@ interface CardProps {
   category?: string
   ingredients?: string[]
   nutritions?: Nutrition[]
+  onClick?: any
 }
 
 interface Nutrition {
@@ -20,7 +22,7 @@ interface Nutrition {
   amount: string
 }
 
-const Card = ({ id, image, name, rating, price, size, category, ingredients, nutritions }: CardProps) => {
+const Card = ({ id, image, name, rating, price, size, category, ingredients, nutritions, onClick }: CardProps) => {
   const stars = Array.from({length: Math.round(rating)}, (_, index) => index + 1)
   const emptyStars = Array.from({length: 5-Math.round(rating)}, (_, index) => index + 1)
   return (
@@ -70,7 +72,9 @@ const Card = ({ id, image, name, rating, price, size, category, ingredients, nut
           </div>
           <div className="flex items-center justify-between">
             <span className={`{size === 'sm' ? 'text-xl' : 'text-3xl'} font-bold text-gray-900`}>{`$ ${price}`}</span>
-            <Link href="/" className="text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add to cart</Link>
+            <div className="max-w-[200px] flex">
+              <Button label="Add to cart" onClick={onClick} />
+            </div>
           </div>
         </div>
       </div>
