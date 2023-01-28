@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Head from 'next/head'
+import { getSession } from 'next-auth/react'
 import mongoose from 'mongoose'
 import { useToast } from '@chakra-ui/react'
-// import AllApi from '../api/service/index.service'
 import Button from '@/components/form-elements/button'
 import Input from '@/components/form-elements/input'
 import Textarea from '@/components/form-elements/textarea'
@@ -11,11 +11,10 @@ import User from '../models/User'
 import { IUser } from '../types/interface'
 
 type Props = {
-  user: IUser;
-};
+  user: IUser
+}
 
 const Profile = ({ user }: Props) => {
-  // const allApi = AllApi.useAPI()
   const [data, setData] = useState<IUser>(user);
   
   const toast = useToast()
@@ -25,26 +24,36 @@ const Profile = ({ user }: Props) => {
   }
 
   const handleSubmit = async() => {
-    // const res = await allApi.updateProfile(user._id, data)
-    // if (res) {
-    //   const { data } = res
-    //   toast({
-    //     title: "Profile",
-    //     description: "Profile has been updated successfully",
-    //     status: "success",
-    //     duration: 3000,
-    //     position: 'top-right',
-    //     isClosable: true,
-    //   })
-    // } else {
-    //   toast({
-    //     title: "Error",
-    //     status: "error",
-    //     duration: 3000,
-    //     position: 'top-right',
-    //     isClosable: true,
-    //   })
-    // }
+    const response = await fetch(`/api/user/${user._id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const status = response.status
+    const res = await response.json()
+
+    if(status === 200) {
+      toast({
+        title: "Profile",
+        description: res.message,
+        status: "success",
+        duration: 3000,
+        position: 'top-right',
+        isClosable: true,
+      })
+    }
+    else {
+      toast({
+        title: "Error",
+        status: "error",
+        duration: 3000,
+        position: 'top-right',
+        isClosable: true,
+      })
+    }
   }
 
   
@@ -110,13 +119,26 @@ const Profile = ({ user }: Props) => {
 
 export default Profile
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: { req: any }) {
+  const session = await getSession({ req: context.req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
   if (!mongoose.connections[0].readyState) {
     await mongoose.connect(process.env.MONGO_URI as string);
   }
   
-  const user = await User.findOne({id: "63d2a408a56c82fb061a2612"},{password: 0})
-  return {
-    props: { user: JSON.parse(JSON.stringify(user)) },
-  };
+  if (session) {
+    const user = await User.findOne({email: session.user?.email},{password: 0})
+    return {
+      props: { session, user: JSON.parse(JSON.stringify(user)) },
+    }
+  }
+  return { props: { user: {}} }
 }

@@ -1,12 +1,60 @@
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
-import React from 'react'
-import Image from 'next/image'
+import Link from 'next/link'
+import mongoose from 'mongoose'
 import SubTitle from '@/components/sub-title'
 import Card from '@/components/card'
-import Link from 'next/link'
+import Product from '@/models/Product'
+import { IProduct } from '@/types/interface'
+import Input from '@/components/form-elements/input'
 
-const ProductDetail = () => {
-  const products = Array.from({ length: 5 }, (_, index) => index + 1)
+type Props = {
+  product: IProduct
+};
+
+const ProductDetail = ({ product }: Props) => {
+  const [quantity, setQuantity] = useState<number>(1)
+
+  const [nutritionPro, setNutritionPro] = useState<IProduct[]>([])
+  const [ingredientsPro, setIngredientsPro] = useState<IProduct[]>([])
+
+  useEffect(() => {
+    fetchNuttritionProducts(product.nutritions)
+    fetchIngredientProducts(product.ingredients)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const fetchNuttritionProducts = async(nutritions: any) => {
+    let nutri: any[] = []
+    nutritions.map((n: { name: any }) => nutri.push(n.name))
+    const response = await fetch(`/api/product?nutritions=${nutri}&id=${product._id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const status = response.status
+    const res = await response.json()
+    if(status === 200) {
+      setNutritionPro(res.products)
+    }
+  }
+
+  const fetchIngredientProducts = async(ingredients: string[]) => {
+    const response = await fetch(`/api/product?ingredients=${ingredients}&id=${product._id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const status = response.status
+    const res = await response.json()
+    if(status === 200) {
+      setIngredientsPro(res.products)
+    }
+  }
 
   return (
     <>
@@ -17,43 +65,94 @@ const ProductDetail = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="px-4 pt-[100px] pb-10 md:px-4 mx-auto max-w-[1080px] flex flex-col min-h-[calc(100vh-111px)]">
-        <div className="max-w-sm w-full lg:max-w-full lg:flex flex-col">
-          <div className="flex items-baseline">
-            <div className="h-48 lg:w-48 flex-none rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden bg-[url('/images/Chocolate.webp')] bg-no-repeat bg-cover bg-center" title="Woman holding a mug">
-            </div>
-            <div className="flex items-baseline">
-              <Link href="/" className="text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add to cart</Link>
+        <div className="max-w-sm w-full lg:max-w-full lg:flex flex-row mb-5">
+          <div className="flex items-center w-1/3">
+            <div className="h-48 lg:w-48 flex-none rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden bg-[url('/images/Chocolate.webp')] bg-no-repeat bg-cover bg-center" title={product.name}>
             </div>
           </div>
           <div className="p-4 flex flex-col justify-between leading-normal">
             <div className="mb-8">
-              <div className="text-gray-900 font-bold text-xl mb-2">Can coffee make you a better developer?</div>
-              <p className="text-gray-700 text-base">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.</p>
+              <div className="text-gray-900 font-bold text-xl mb-2">{product.name}</div>
+              <div className="flex">
+                <div className="w-1/2">
+                  <p className="text-gray-700 font-bold">
+                    Ingredients
+                  </p>
+                  <ul className="ml-8 text-gray-700">
+                    {
+                      product?.ingredients?.map(ingredient => <li className="list-disc" key={ingredient}>{ingredient}</li>)
+                    }
+                  </ul>
+                </div>
+                <div className="w-1/2">
+                  <p className="text-gray-700 font-bold">
+                    Nutritions
+                  </p>
+                  <ul className="ml-8 text-gray-700">
+                    {
+                      product?.nutritions?.map(nutrition => <li className="list-disc" key={nutrition.name}>
+                        <span>{nutrition.name}</span> - <span>{nutrition.amount}</span>
+                      </li>)
+                    }
+                  </ul> 
+                </div>
+              </div>
             </div>
-            <div className="flex items-center">
-              <Image className="w-10 h-10 rounded-full mr-4" width={100} height={100} src="/images/Chocolate.webp" alt="Avatar of Jonathan Reinink" />
+            <div className="flex items-end space-x-5">
               <div className="text-sm">
-                <p className="text-gray-900 leading-none">Jonathan Reinink</p>
-                <p className="text-gray-600">Aug 18</p>
+                <p className="text-gray-900 leading-none font-bold">{`$ ${product.price}`}</p>
+                <Input
+                  id="quantity"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={quantity.toString()}
+                  type="number"
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </div>
+              <div className="flex items-baseline">
+                <Link href="/cart" className="text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add to cart</Link>
               </div>
             </div>
           </div>
         </div>
-        <SubTitle title="Suggestion" />
+        {nutritionPro.length >= 1 ? <SubTitle title="Suggestion - Nutritions" /> : '' }
+        <div className="flex justify-start flex-wrap mb-10">
+          {
+            nutritionPro.length >= 1 ? nutritionPro.map(pro => {
+              return (
+                <Card
+                  key={pro._id}
+                  size="sm"
+                  image="/images/Chocolate.webp"
+                  name={pro.name}
+                  rating={pro.rating}
+                  price={pro.price}
+                  id={pro._id}
+                  ingredients={pro.ingredients}
+                  nutritions={pro.nutritions}
+                />)
+            }): ''
+          }
+        </div>
+        {ingredientsPro.length >= 1 ? <SubTitle title="Suggestion - Ingredients" /> : ''}
         <div className="flex justify-start flex-wrap">
           {
-            products.map(product => {
-              return (<Card
-                key={product}
-                size="sm"
-                image="/images/Chocolate.webp"
-                name="Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport"
-                rating="5.0"
-                price="$599"
-              />)
-            })
+            ingredientsPro.length >= 1 ? ingredientsPro.map(pro => {
+              return (
+                <Card
+                  key={pro._id}
+                  size="sm"
+                  image="/images/Chocolate.webp"
+                  name={pro.name}
+                  rating={pro.rating}
+                  price={pro.price}
+                  id={pro._id}
+                  ingredients={pro.ingredients}
+                  nutritions={pro.nutritions}
+                />)
+            }): ''
           }
-
         </div>
       </main>
     </>
@@ -61,3 +160,13 @@ const ProductDetail = () => {
 }
 
 export default ProductDetail
+
+export async function getServerSideProps(context: { req: any, query: { slug: string } }) {
+  if (!mongoose.connections[0].readyState) {
+    await mongoose.connect(process.env.MONGO_URI as string)
+  }
+  const product = await Product.findOne({ _id: context.query.slug })
+  return {
+    props: { product: JSON.parse(JSON.stringify(product)) },
+  }
+}

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import { signOut, useSession } from 'next-auth/react'
 import { Button } from '@chakra-ui/button'
-import { AiOutlineMenu, AiOutlineShoppingCart } from 'react-icons/ai'
+import { AiOutlineMenu } from 'react-icons/ai'
 
 const NavBar = () => {
   const { data: session, status } = useSession()
@@ -43,19 +43,18 @@ const NavBar = () => {
             } justify-between items-center w-full md:flex md:w-auto md:order-1`}
           >
             <ul className="flex flex-col items-center mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
+              <li>
+                <Link
+                  href="/products"
+                  className={`${pathname === "/products" ? "text-orange-600" : "text-gray-700"
+                    } block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-orange-400 md:p-0`}
+                  aria-current="page"
+                >
+                  <b>Products</b>
+                </Link>
+              </li>
               {status === "authenticated" ? (
                 <>
-                  <li>
-                    <Link
-                      href="/products"
-                      className={`${
-                        pathname === "/products" ? "text-orange-600" : "text-gray-700"
-                      } block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-orange-400 md:p-0`}
-                      aria-current="page"
-                    >
-                      <b>Products</b>
-                    </Link>
-                  </li>
                   <li>
                     <Link
                       href="/cart"
@@ -87,11 +86,13 @@ const NavBar = () => {
                     </Button>
                   </li>
                 </>
-              ): (
-                <li>
-                  <Link href="/auth" className="w-full md:w-[70%] lg:w-full flex items-center justify-center px-8 py-3 border-0 border-transparent text-base font-bold rounded-full text-white bg-orange-500 md:py-2 md:px-5"
+              ) : (
+                <>
+                  <li>
+                    <Link href="/auth" className="w-full md:w-[70%] lg:w-full flex items-center justify-center px-8 py-3 border-0 border-transparent text-base font-bold rounded-full text-white bg-orange-500 md:py-2 md:px-5"
                     >Sign In</Link>
-                </li>
+                  </li>
+                </>
               )}
             </ul>
           </div>
