@@ -1,6 +1,4 @@
 import Button from '@/components/form-elements/button'
-import Input from '@/components/form-elements/input'
-import Select from '@/components/form-elements/select'
 import Title from '@/components/title'
 import Head from 'next/head'
 import Image from 'next/image'

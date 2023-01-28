@@ -8,7 +8,7 @@ const Footer = () => {
           <span className="text-sm sm:text-md sm:text-center">© {new Date().getFullYear()} <a href="" className="hover:underline">Smart Cart</a>. All Rights Reserved.
           </span>
           <div className="flex space-x-6 sm:justify-center">
-            <a href="" target="_blank" className="hover:text-gray-300" rel="noreferrer">
+            <a href="https://github.com/senali-d/SmartCart" target="_blank" className="hover:text-gray-300" rel="noreferrer">
               <AiFillGithub size={25} />
             </a>
           </div>
