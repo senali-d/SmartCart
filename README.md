@@ -1,38 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Smart Cart
+Save money and make healthier food choices while shopping.
+
+## Inspiration
+Many individuals may have struggled with staying within a budget while grocery shopping or finding healthy options. Studies have also shown that consumers often have a hard time making healthy choices while grocery shopping and may be more influenced by marketing and packaging than by nutritional information. A smart shopping cart app can serve as a solution to these problems by providing shoppers with easy access to relevant information and personalized suggestions while  shopping.
+
+## What it does
+A smart shopping cart application would essentially function as a personal shopping assistant that helps shoppers make better-informed decisions while they are shopping. The app would use use a database of products to show the nutritional information, ingredients, and prices of the products. The smart shopping cart application would provide shoppers with an easy way to access relevant information and personalized suggestions while shopping, helping them to make better-informed decisions about the products buy.
 
 ## Getting Started
 
-First, run the development server:
+Getting started is easy.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+### Clone the repository
+
+Clone the repository to your machine. Open a terminal and run the following git command:
+
+```
+git clone "url you just copied"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Run the React app
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+First of all, install all the dependencies needed to run the react app on your system successfully by using the command yarn:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```
+yarn
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+After that, run the command yarn start to view the app in your browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+yarn dev
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Open http://localhost:3000 to view it in your browser.
