@@ -32,7 +32,7 @@ const Products = () => {
         title: "Budget exceed",
         status: "error",
         duration: 3000,
-        position: 'top-right',
+        position: 'top-left',
         isClosable: true,
       })
     }
@@ -65,6 +65,13 @@ const Products = () => {
       setLocalStoreCart(tempCart)
       let tempTotal = localStoreTotal
       setLocalStoreTotal(tempTotal+product.price)
+      toast({
+        title: "Added to cart",
+        status: "success",
+        duration: 3000,
+        position: 'top-left',
+        isClosable: true,
+      })
     }else {
       router.replace('/auth')
     }

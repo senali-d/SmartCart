@@ -5,16 +5,7 @@ import useLocalStorage from '@/hooks/useLocalStorage'
 import Button from '@/components/form-elements/button'
 import { useToast } from '@chakra-ui/react'
 import { getSession } from 'next-auth/react'
-
-const CartRow = (pro: any) => {
-  return (
-    <div key={pro._id} className="flex border-b border-orange-400 py-2 justify-between">
-      <p className="text-gray-500">{pro.name}</p>
-      <p className="text-gray-500">Qty {pro.quantity}</p>
-      <p className="text-gray-900">Rs. {pro.price}</p>
-    </div>
-  )
-}
+import { AiOutlineClose } from 'react-icons/ai'
 
 const Cart = () => {
   const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', [])
@@ -35,7 +26,7 @@ const Cart = () => {
         title: "Budget exceed",
         status: "error",
         duration: 3000,
-        position: 'top-right',
+        position: 'top-left',
         isClosable: true,
       })
     }
@@ -45,6 +36,21 @@ const Cart = () => {
   const handleBudget = (e: { target: { value: string } }) => {
     setBudget(parseInt(e.target.value))
     setLocalStoreBudget(e.target.value)
+  }
+
+  const handleCheckout = () => {
+    setLocalStoreCart([])
+    setLocalStoreBudget(0)
+    setLocalStoreTotal(0)
+    setBudget(0)
+  }
+
+  const handleRemoveProduct = (id: any, price: any) => {
+    console.log(id)
+    const tempCart = localStoreCart
+    const cart = tempCart.filter((pro: any) => pro._id !== id)
+    setLocalStoreCart(cart)
+    setLocalStoreTotal(localStoreTotal-price)
   }
 
   return (
@@ -65,28 +71,24 @@ const Cart = () => {
                   Products
                 </a>
               </div>
-              <>
-                {localStoreCart ? (
-                  localStoreCart.map((product: any) => {
-                    return (
-                      <CartRow
-                        key={product._id}
-                        name={product.name}
-                        quantity={product.quantity}
-                        price={product.price}
-                      />
-                    );
-                  })
-                ) : (
-                  <></>
-                )}
-              </>
+              {
+                localStoreCart.length >= 1 ?
+                  (
+                    localStoreCart.map((product: any) => <div key={product._id} className="flex border-b border-orange-400 py-2 justify-between">
+                      <div className="text-gray-500">{product.name}</div>
+                      <div className="text-gray-500">Qty {product.quantity}</div>
+                      <div className="text-gray-900">Rs. {product.price}</div>
+                      <AiOutlineClose className="text-red-500" onClick={() => handleRemoveProduct(product._id, product.price)} />
+                    </div>)
+                  )
+                  : <></>
+              }
               <div className="flex mt-5 justify-between">
                 <span className="title-font font-medium text-2xl text-gray-900">
                   Rs. {localStoreTotal}
                 </span>
                 <div className="max-w-[200px]">
-                  <Button label="Checkout" onClick={() => {}} />
+                  <Button label="Checkout" onClick={handleCheckout} />
                 </div>
               </div>
             </div>

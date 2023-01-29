@@ -96,9 +96,9 @@ const Card = ({ id, image, name, rating, price, size, category, ingredients, nut
               <span
                 className={`{size === 'sm' ? 'text-xl' : 'text-3xl'} font-bold text-gray-900`}
               >{`Rs. ${price}`}</span>
-              <div className="max-w-[200px] flex">
+              {size !== "sm" ? <div className="max-w-[200px] flex">
                 <Button label="Add to cart" onClick={onClick} />
-              </div>
+              </div> : ''}
             </div>
           </div>
         </div>

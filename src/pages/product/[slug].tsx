@@ -8,16 +8,29 @@ import Card from '@/components/card'
 import Product from '@/models/Product'
 import { IProduct } from '@/types/interface'
 import Input from '@/components/form-elements/input'
+import Button from '@/components/form-elements/button'
+import { useSession } from 'next-auth/react'
+import useLocalStorage from '@/hooks/useLocalStorage'
+import { useRouter } from 'next/router'
+import { useToast } from '@chakra-ui/toast'
 
 type Props = {
   product: IProduct
 };
 
 const ProductDetail = ({ product }: Props) => {
+  const { status } = useSession()
+  const router = useRouter()
+
+  const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', [])
+  const [localStoreTotal, setLocalStoreTotal] = useLocalStorage('total', 0)
+  
   const [quantity, setQuantity] = useState<number>(1)
 
   const [nutritionPro, setNutritionPro] = useState<IProduct[]>([])
   const [ingredientsPro, setIngredientsPro] = useState<IProduct[]>([])
+
+  const toast = useToast()
 
   useEffect(() => {
     fetchNuttritionProducts(product.nutritions)
@@ -54,6 +67,30 @@ const ProductDetail = ({ product }: Props) => {
     const res = await response.json()
     if(status === 200) {
       setIngredientsPro(res.products)
+    }
+  }
+
+  const handleAddCart = (product: any) => {
+    if(status === "authenticated") {
+      let tempCart = []
+      if(localStoreCart !== null) {
+        tempCart = localStoreCart
+      }
+      product.quantity = quantity
+      product.price = product.price*quantity
+      tempCart.push(product)
+      setLocalStoreCart(tempCart)
+      let tempTotal = localStoreTotal
+      setLocalStoreTotal(tempTotal+product.price)
+      toast({
+        title: "Added to cart",
+        status: "success",
+        duration: 3000,
+        position: 'top-left',
+        isClosable: true,
+      })
+    }else {
+      router.replace('/auth')
     }
   }
 
@@ -113,7 +150,7 @@ const ProductDetail = ({ product }: Props) => {
                 />
               </div>
               <div className="flex items-baseline">
-                <Link href="/cart" className="text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add to cart</Link>
+                <Button label="Add to cart" onClick={()=>handleAddCart(product)} />
               </div>
             </div>
           </div>
