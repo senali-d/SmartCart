@@ -6,21 +6,38 @@ import { IProduct } from '@/types/interface'
 import useLocalStorage from '@/hooks/useLocalStorage'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { useToast } from '@chakra-ui/react'
 
 const Products = () => {
   const { status } = useSession()
   const router = useRouter()
 
+  const [localStoreBudget, setLocalStoreBudget] = useLocalStorage('budget', 0)
   const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', [])
   const [localStoreTotal, setLocalStoreTotal] = useLocalStorage('total', 0)
   const [products, setProducts] = useState<IProduct[]>([])
   const [search, setSearch] = useState('')
+
+  const toast = useToast()
 
   useEffect(() => {
     const params = search !== '' ? `?name=${search}` : ''
     fetchProducts(params)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search])
+
+  useEffect(() => {
+    if(localStoreBudget < localStoreTotal) {
+      toast({
+        title: "Budget exceed",
+        status: "error",
+        duration: 3000,
+        position: 'top-right',
+        isClosable: true,
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStoreBudget, localStoreCart, localStoreTotal])
 
   const fetchProducts = async(params: string) => {
     const response = await fetch(`/api/product${params}`, {

@@ -102,7 +102,7 @@ const ProductDetail = ({ product }: Props) => {
             </div>
             <div className="flex items-end space-x-5">
               <div className="text-sm">
-                <p className="text-gray-900 leading-none font-bold">{`$ ${product.price}`}</p>
+                <p className="text-gray-900 leading-none font-bold">{`Rs. ${product.price}`}</p>
                 <Input
                   id="quantity"
                   name="quantity"
@@ -118,10 +118,10 @@ const ProductDetail = ({ product }: Props) => {
             </div>
           </div>
         </div>
-        {nutritionPro.length >= 1 ? <SubTitle title="Suggestion - Nutritions" /> : '' }
+        {ingredientsPro.length >= 1 ? <SubTitle title="Suggestion - Ingredients" /> : ''}
         <div className="flex justify-start flex-wrap mb-10">
           {
-            nutritionPro.length >= 1 ? nutritionPro.map(pro => {
+            ingredientsPro.length >= 1 ? ingredientsPro.map(pro => {
               return (
                 <Card
                   key={pro._id}
@@ -137,10 +137,10 @@ const ProductDetail = ({ product }: Props) => {
             }): ''
           }
         </div>
-        {ingredientsPro.length >= 1 ? <SubTitle title="Suggestion - Ingredients" /> : ''}
-        <div className="flex justify-start flex-wrap">
+        {nutritionPro.length >= 1 ? <SubTitle title="Suggestion - Nutritions" /> : '' }
+        <div className="flex justify-start flex-wrap mb-10">
           {
-            ingredientsPro.length >= 1 ? ingredientsPro.map(pro => {
+            nutritionPro.length >= 1 ? nutritionPro.map(pro => {
               return (
                 <Card
                   key={pro._id}

@@ -11,7 +11,7 @@ const CartRow = (pro: any) => {
     <div key={pro._id} className="flex border-b border-orange-400 py-2 justify-between">
       <p className="text-gray-500">{pro.name}</p>
       <p className="text-gray-500">Qty {pro.quantity}</p>
-      <p className="text-gray-900">$ {pro.price}</p>
+      <p className="text-gray-900">Rs. {pro.price}</p>
     </div>
   )
 }
@@ -83,7 +83,7 @@ const Cart = () => {
               </>
               <div className="flex mt-5 justify-between">
                 <span className="title-font font-medium text-2xl text-gray-900">
-                  $ {localStoreTotal}
+                  Rs. {localStoreTotal}
                 </span>
                 <div className="max-w-[200px]">
                   <Button label="Checkout" onClick={() => {}} />
@@ -107,7 +107,7 @@ const Cart = () => {
               </div>
               <div className="flex mt-5 justify-end">
                 <span className="title-font font-medium text-2xl text-gray-900">
-                  $ {budget}
+                  Rs. {budget}
                 </span>
               </div>
             </div>
@@ -129,5 +129,8 @@ export async function getServerSideProps(context: { req: any }) {
         permanent: false,
       }
     }
+  }
+  return {
+    props: { session },
   }
 }
