@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import mongoose from 'mongoose'
 import SubTitle from '@/components/sub-title'
 import Card from '@/components/card'
@@ -67,7 +68,8 @@ const ProductDetail = ({ product }: Props) => {
       <main className="px-4 pt-[100px] pb-10 md:px-4 mx-auto max-w-[1080px] flex flex-col min-h-[calc(100vh-111px)]">
         <div className="max-w-sm w-full lg:max-w-full lg:flex flex-row mb-5">
           <div className="flex items-center w-1/3">
-            <div className="h-48 lg:w-48 flex-none rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden bg-[url('/images/Chocolate.webp')] bg-no-repeat bg-cover bg-center" title={product.name}>
+            <div>
+              <Image width="200" height="200" src={product?.image} alt="product image" />
             </div>
           </div>
           <div className="p-4 flex flex-col justify-between leading-normal">
@@ -124,7 +126,7 @@ const ProductDetail = ({ product }: Props) => {
                 <Card
                   key={pro._id}
                   size="sm"
-                  image="/images/Chocolate.webp"
+                  image={pro.image}
                   name={pro.name}
                   rating={pro.rating}
                   price={pro.price}
@@ -143,7 +145,7 @@ const ProductDetail = ({ product }: Props) => {
                 <Card
                   key={pro._id}
                   size="sm"
-                  image="/images/Chocolate.webp"
+                  image={pro.image}
                   name={pro.name}
                   rating={pro.rating}
                   price={pro.price}

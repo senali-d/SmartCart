@@ -4,9 +4,15 @@ import Card from '@/components/card'
 import Search from '@/components/search'
 import { IProduct } from '@/types/interface'
 import useLocalStorage from '@/hooks/useLocalStorage'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 const Products = () => {
-  const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', null)
+  const { status } = useSession()
+  const router = useRouter()
+
+  const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', [])
+  const [localStoreTotal, setLocalStoreTotal] = useLocalStorage('total', 0)
   const [products, setProducts] = useState<IProduct[]>([])
   const [search, setSearch] = useState('')
 
@@ -32,13 +38,19 @@ const Products = () => {
   }
 
   const handleAddCart = (product: any) => {
-    let tempCart = []
-    if(localStoreCart !== null) {
-      tempCart = localStoreCart
+    if(status === "authenticated") {
+      let tempCart = []
+      if(localStoreCart !== null) {
+        tempCart = localStoreCart
+      }
+      product.quantity = 1
+      tempCart.push(product)
+      setLocalStoreCart(tempCart)
+      let tempTotal = localStoreTotal
+      setLocalStoreTotal(tempTotal+product.price)
+    }else {
+      router.replace('/auth')
     }
-    product.quantity = 1
-    tempCart.push(product)
-    setLocalStoreCart(tempCart)
   }
 
   return (
@@ -59,7 +71,7 @@ const Products = () => {
                 <Card
                   size=""
                   key={product._id}
-                  image="/images/Chocolate.webp"
+                  image={product.image}
                   name={product.name}
                   rating={product.rating}
                   price={product.price}

@@ -26,8 +26,8 @@ const Card = ({ id, image, name, rating, price, size, category, ingredients, nut
   const stars = Array.from({length: Math.round(rating)}, (_, index) => index + 1)
   const emptyStars = Array.from({length: 5-Math.round(rating)}, (_, index) => index + 1)
   return (
-    <div className={`${size === 'sm' ? 'w-1/4' : 'w-1/3'}`}>
-      <div className="w-[99%] bg-white border border-gray-200 rounded-lg shadow mt-5">
+    <div className={`${size === 'sm' ? 'w-1/4' : 'w-1/3'} mb-3`}>
+      <div className="w-[99%] bg-white border border-gray-200 rounded-lg shadow mt-5 h-full">
         <Link href={`/product/${id}`}>
           <Image width="200" height="200" className={`${size === 'sm' ? 'p-4' : 'p-6'} rounded-t-lg mx-auto`} src={image} alt="product image" />
         </Link>

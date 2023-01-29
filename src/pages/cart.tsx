@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Title from '@/components/title'
 import useLocalStorage from '@/hooks/useLocalStorage'
+import Button from '@/components/form-elements/button'
+import { useToast } from '@chakra-ui/react'
+import { getSession } from 'next-auth/react'
 
 const CartRow = (pro: any) => {
   return (
@@ -16,12 +19,28 @@ const CartRow = (pro: any) => {
 const Cart = () => {
   const [localStoreCart, setLocalStoreCart] = useLocalStorage('cart', [])
   const [localStoreBudget, setLocalStoreBudget] = useLocalStorage('budget', 0)
+  const [localStoreTotal, setLocalStoreTotal] = useLocalStorage('total', 0)
   const [budget, setBudget] = useState(0)
   
+  const toast = useToast()
+
   useEffect(() => {
     setBudget(localStoreBudget)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if(localStoreBudget < localStoreTotal) {
+      toast({
+        title: "Budget exceed",
+        status: "error",
+        duration: 3000,
+        position: 'top-right',
+        isClosable: true,
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStoreBudget, localStoreCart, localStoreTotal])
 
   const handleBudget = (e: { target: { value: string } }) => {
     setBudget(parseInt(e.target.value))
@@ -47,19 +66,29 @@ const Cart = () => {
                 </a>
               </div>
               <>
-              {
-                localStoreCart ?
-                localStoreCart.map((product: any) => {
-                  return (
-                    <CartRow
-                      key={product._id}
-                      name={product.name}
-                      quantity={product.quantity}
-                      price={product.price}
-                    />)
-                }): <></>
-              }
+                {localStoreCart ? (
+                  localStoreCart.map((product: any) => {
+                    return (
+                      <CartRow
+                        key={product._id}
+                        name={product.name}
+                        quantity={product.quantity}
+                        price={product.price}
+                      />
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
               </>
+              <div className="flex mt-5 justify-between">
+                <span className="title-font font-medium text-2xl text-gray-900">
+                  $ {localStoreTotal}
+                </span>
+                <div className="max-w-[200px]">
+                  <Button label="Checkout" onClick={() => {}} />
+                </div>
+              </div>
             </div>
             <div className="lg:w-1/2 w-full lg:pr-10 mb-6 lg:mb-0">
               <div className="flex mb-4">
@@ -68,7 +97,13 @@ const Cart = () => {
                 </a>
               </div>
               <div className="flex border-b border-orange-400 py-2 justify-between">
-                <input type="number" placeholder="Set you budget" value={localStoreBudget} onChange={handleBudget} className="w-full bg-transparent focus:border-none focus:outline-none" />
+                <input
+                  type="number"
+                  placeholder="Set you budget"
+                  value={localStoreBudget}
+                  onChange={handleBudget}
+                  className="w-full bg-transparent focus:border-none focus:outline-none"
+                />
               </div>
               <div className="flex mt-5 justify-end">
                 <span className="title-font font-medium text-2xl text-gray-900">
@@ -84,3 +119,15 @@ const Cart = () => {
 }
 
 export default Cart
+
+export async function getServerSideProps(context: { req: any }) {
+  const session = await getSession({ req: context.req });
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+}
